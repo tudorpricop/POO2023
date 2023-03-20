@@ -19,7 +19,7 @@ This lab covers creating simple classes and organizing program files using heade
 
 ## Lab 3: Methods and Method Overloading
 
-This lab covers defining methods in a class, method overloading, and file organization using headers and cpp files. The exercises include creating methods with variadic parameters, promoting and casting data types, and an exercise of a canvas class with basic draw methods.
+This lab covers defining methods in a class and focuses on method overloading. The exercises include creating methods with variadic parameters, promoting and casting data types, and an exercise of a canvas class with basic draw methods.
 
 ## Lab 4: Class Constructors and Sorting Algorithms
 
