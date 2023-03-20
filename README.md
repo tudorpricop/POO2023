@@ -1,6 +1,6 @@
 # OOP2023
 
-This project contains exercises for the Object-Oriented Programming (OOP) laboratories at the faculty. Each laboratory covers different topics related to C++ programming language.
+This project contains exercises for the Object-Oriented Programming (OOP) laboratories at the faculty. Each laboratory covers different topics related to C/C++ programming language.
 
 ## Table of Contents
 
