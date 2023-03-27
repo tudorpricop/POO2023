@@ -1,6 +1,8 @@
 #include "Number.h"
 #include <iostream>
 #include <cstring>
+#pragma warning(disable:4996)
+
 using namespace std;
 
 // aux function 
@@ -15,6 +17,31 @@ int ConvertToBase10(const char* value) {
     return result;
 }
 
+Number::Number(int n) {
+    int tmp = n;
+    int count = 0;
+    while (tmp > 0) {
+        tmp /= 10;
+        count++;
+    }
+    this->value = new char[count + 1];
+    this->value[count] = '\0';
+    for (int i = count - 1; i >= 0; i--) {
+        this->value[i] = (n % 10) + '0';
+        n /= 10;
+    }
+    this->base = 10;
+}
+
+Number::Number(const char* s) {
+    int len = strlen(s);
+    this->value = new char[len + 1];
+    this->value[len] = '\0';
+    for (int i = 0; i < len; i++) {
+        this->value[i] = s[i];
+    }
+    this->base = 10;
+}
 
 Number::Number(const char* value, int base)
 {
@@ -55,6 +82,19 @@ Number::~Number()
         value = nullptr;
 }
 
+// copy assignment operator
+void Number::operator = (const Number& copy)
+{
+    if (this->value != nullptr)
+    {
+        delete[] this->value;
+        this->value = nullptr;
+    }
+    this->value = new char[strlen(copy.value) + 1];
+    memcpy(this->value, copy.value, strlen(copy.value) + 1);
+    this->base = copy.base;
+}
+
 // move assignment operator
 Number& Number::operator=(Number&& other) noexcept
 {
@@ -67,6 +107,65 @@ Number& Number::operator=(Number&& other) noexcept
 	}
 	return *this;
 }
+
+void Number::operator = (int num)
+{
+    int temp = num;
+    int digitCount = 0;
+
+    // Count the number of digits in the integer
+    while (temp != 0) {
+        temp /= 10;
+        digitCount++;
+    }
+
+    // Allocate memory for the character array
+    delete[] value;
+    value = new char[digitCount + 1];
+
+    // Convert the integer to a character array
+    temp = num;
+    for (int i = digitCount - 1; i >= 0; i--) {
+        value[i] = '0' + temp % 10;
+        temp /= 10;
+    }
+
+    // Add a null terminator at the end of the character array
+    value[digitCount] = '\0';
+
+    base = 10;
+}
+
+void Number:: operator = (const char* string)
+{
+    delete[] value;
+    value = new char[strlen(string) + 1];
+    memcpy(value, string, strlen(string) + 1);
+    base = 10;
+}
+
+void Number::operator+=(const Number& obj)
+{
+    Number aux = (*this) + obj;
+    *this = aux;
+}
+
+void Number::operator-=(const Number& obj)
+{
+    Number aux = (*this) - obj;
+    *this = aux;
+}
+
+void Number::operator+=(int x)
+{
+    *this = (*this) + x;
+}
+
+void Number::operator-=(int x)
+{
+    *this = (*this) - x;
+}
+
 
 Number operator+(const Number& n1, const Number& n2)
 {
@@ -313,50 +412,144 @@ Number operator-(int n1, const Number& n2)
     return t3;
 }
 
+bool Number::operator==(const Number& other) const
+{
+    Number aux2 = other, aux1 = (*this);
+    aux1.SwitchBase(10);
+    aux2.SwitchBase(10);
+
+    return (strcmp(aux1.value, aux2.value) == 0);
+
+}
 
 bool Number::operator<(const Number& other) const
 {
-	return false;
+    // If bases are different, switch to the larger base first
+    if (base != other.base)
+    {
+        int largerBase = (base > other.base) ? base : other.base;
+        Number tmp1 = *this, tmp2 = other;
+        tmp1.SwitchBase(largerBase);
+        tmp2.SwitchBase(largerBase);
+        return (tmp1 < tmp2);
+    }
+
+    // Compare the numbers digit by digit
+    int n = strlen(value), m = strlen(other.value);
+    if (n < m)
+        return true;
+    if (n > m)
+        return false;
+    for (int i = 0; i < n; i++)
+    {
+        if (value[i] < other.value[i])
+            return true;
+        if (value[i] > other.value[i])
+            return false;
+    }
+    return false; // the numbers are equal
 }
+
 
 bool Number::operator>(const Number& other) const
 {
-	return false;
+    // If bases are different, switch to the larger base first
+    if (base != other.base)
+    {
+        int largerBase = (base > other.base) ? base : other.base;
+        Number tmp1 = *this, tmp2 = other;
+        tmp1.SwitchBase(largerBase);
+        tmp2.SwitchBase(largerBase);
+        return (tmp1 > tmp2);
+    }
+
+    // Compare the numbers digit by digit
+    int n = strlen(value), m = strlen(other.value);
+    if (n > m)
+        return true;
+    if (n < m)
+        return false;
+    for (int i = 0; i < n; i++)
+    {
+        if (value[i] > other.value[i])
+            return true;
+        if (value[i] < other.value[i])
+            return false;
+    }
+    return false; // the numbers are equal
 }
 
 bool Number::operator<=(const Number& other) const
 {
-	return false;
+    return (*this < other) || (*this == other);
 }
 
 bool Number::operator>=(const Number& other) const
 {
-	return false;
-}
-
-bool Number::operator==(const Number& other) const
-{
-	return false;
+    return (*this > other) || (*this == other);
 }
 
 bool Number::operator!=(const Number& other) const
 {
-	return false;
+    Number aux2 = other, aux1 = (*this);
+    aux1.SwitchBase(10);
+    aux2.SwitchBase(10);
+
+    if (strlen(aux2.value) != strlen(aux1.value)) {
+        return true;
+    }
+
+    for (int i = 0; i < strlen(aux2.value); i++) {
+        if (aux1[i] != aux2[i]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 char Number::operator[](int index) const
 {
-	return 0;
+    if (index >= strlen(value)) {
+        cout << "Error: invalid position in the number" << std::endl;
+        exit(0);
+    }
+
+    return value[index];
 }
 
-Number& Number::operator--()
+void Number::operator--()
 {
-	// TODO: insert return statement here
+    if (value == nullptr || strlen(value) == 0)
+    {
+        cout << "Error: invalid -- on current number!" << std::endl;
+        exit(0);
+    }
+
+    // Remove the most significant digit
+    char* newValue = new char[strlen(value)];
+    strcpy(newValue, value + 1);
+    delete[] value;
+    value = newValue;
+    newValue = nullptr;
 }
 
-Number Number::operator--(int)
+void Number::operator--(int)
 {
-	return Number();
+    int len = strlen(value);
+
+    if (len == 1 && value[0] == '0')
+    {
+        cout << "Error: invalid -- on current number!" << std::endl;
+        exit(0);
+    }
+
+    char* newValue = new char[len];
+    strncpy(newValue, value, len - 1); // copy all but last digit to new array
+    newValue[len - 1] = '\0'; // add null terminator
+    delete[] value; // deallocate old value
+    value = newValue; // assign new value to member variable
+    newValue = nullptr;
 }
 
 void Number::Print() const
@@ -368,7 +561,7 @@ void Number::SwitchBase(int newBase)
 {
     // Check if the new base is within the valid range
     if (newBase < 2 || newBase > 16) {
-        std::cout << "Error: invalid base specified!" << std::endl;
+        cout << "Error: invalid base specified!" << std::endl;
         exit (0);
     }
 

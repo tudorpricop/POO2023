@@ -7,12 +7,12 @@ int main()
 
 {
 
-    Number n1("10110010", 2);
+    Number n1("10110010", 2); // 178
 
-    Number n2("734", 8);
+    Number n2("734", 8); // 476
 
-    Number n3("FF", 16);
 
+    Number n3("FF", 16); // 255
 
 
     printf("n1 has %d digits and it is written in base %d\n", n1.GetDigitsCount(), n1.GetBase());
@@ -31,7 +31,7 @@ int main()
 
     n1 = (n2 + n3 - n1) + n1; // after this n1 will be in base 16
 
-    n1.SwitchBase(2);
+    n1.SwitchBase(10);
 
     n1.Print();
 
