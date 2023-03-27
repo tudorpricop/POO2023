@@ -1,15 +1,43 @@
 #include "Number.h"
 #include <iostream>
+#include <cstring>
 using namespace std;
+
+// aux function 
+int ConvertToBase10(const char* value) {
+    int result = 0;
+    int power = 1;
+    int len = strlen(value);
+    for (int i = len - 1; i >= 0; i--) {
+        result += ((int)value[i] - '0') * power;
+        power *= 10;
+    }
+    return result;
+}
+
 
 Number::Number(const char* value, int base)
 {
+    // Allocate memory for the value string
+    size_t len = strlen(value);
+    this->value = new char[len + 1];
 
+    strcpy(this->value,value);
+
+    // Set the base member to the input base value
+    this->base = base;
 }
 
 // copy constructor
 Number::Number(const Number& other)
 {
+    // Allocate memory for the value string
+    size_t len = strlen(other.value);
+    this->value = new char[len + 1];
+
+    strcpy(this->value, other.value);
+
+    this->base = other.base;
 }
 
 // move constructor
@@ -23,6 +51,8 @@ Number::Number(Number&& other) noexcept
 
 Number::~Number()
 {
+        delete[] value;
+        value = nullptr;
 }
 
 // move assignment operator
@@ -36,6 +66,251 @@ Number& Number::operator=(Number&& other) noexcept
 		other.base = 0;
 	}
 	return *this;
+}
+
+Number operator+(const Number& n1, const Number& n2)
+{
+    // make copy of our numbers
+    Number c1 = n1;
+    Number c2 = n2;
+
+    int newBase = max(c1.base, c2.base);
+
+    c1.SwitchBase(10);
+    c2.SwitchBase(10);
+
+    int sum = ConvertToBase10(c1.value) + ConvertToBase10(c2.value);
+
+    int nrDigits = 0;
+    int auxSum = sum;
+
+    while (auxSum)
+    {
+        auxSum /= 10;
+        nrDigits++;
+    }
+
+
+    // Allocate memory for the character array
+    char* str = new char[nrDigits + 1];
+
+    // Convert each digit to its ASCII character representation
+    for (int i = nrDigits - 1; i >= 0; i--) {
+        str[i] = sum % 10 + '0';
+        sum /= 10;
+    }
+
+    // Add a null terminator to the end of the character array
+    str[nrDigits] = '\0';
+
+    Number t3(str, 10);
+    t3.SwitchBase(newBase);
+
+    delete[] str; // deallocate the output array when done
+
+    return t3;
+}
+
+Number operator+(const Number& n1, int n2)
+{
+    // make copy of our numbers
+    Number c1 = n1;
+
+    int newBase = max(c1.base, 10);
+
+    c1.SwitchBase(10);
+
+    int sum = ConvertToBase10(c1.value) + n2;
+
+    int nrDigits = 0;
+    int auxSum = sum;
+
+    while (auxSum)
+    {
+        auxSum /= 10;
+        nrDigits++;
+    }
+
+    // Allocate memory for the character array
+    char* str = new char[nrDigits + 1];
+
+    // Convert each digit to its ASCII character representation
+    for (int i = nrDigits - 1; i >= 0; i--) {
+        str[i] = sum % 10 + '0';
+        sum /= 10;
+    }
+
+    // Add a null terminator to the end of the character array
+    str[nrDigits] = '\0';
+
+    Number t3(str, 10);
+    t3.SwitchBase(newBase);
+
+    delete[] str; // deallocate the output array when done
+
+    return t3;
+}
+
+Number operator+(int n1, const Number& n2)
+{
+    // make copy of our numbers
+    Number c1 = n2;
+
+    int newBase = max(c1.base, 10);
+
+    c1.SwitchBase(10);
+
+    int sum = ConvertToBase10(c1.value) + n1;
+
+    int nrDigits = 0;
+    int auxSum = sum;
+
+    while (auxSum)
+    {
+        auxSum /= 10;
+        nrDigits++;
+    }
+
+    // Allocate memory for the character array
+    char* str = new char[nrDigits + 1];
+
+    // Convert each digit to its ASCII character representation
+    for (int i = nrDigits - 1; i >= 0; i--) {
+        str[i] = sum % 10 + '0';
+        sum /= 10;
+    }
+
+    // Add a null terminator to the end of the character array
+    str[nrDigits] = '\0';
+
+    Number t3(str, 10);
+    t3.SwitchBase(newBase);
+
+    delete[] str; // deallocate the output array when done
+
+    return t3;
+}
+
+Number operator-(const Number& n1, const Number& n2)
+{
+    // make copy of our numbers
+    Number c1 = n1;
+    Number c2 = n2;
+
+    int newBase = max(c1.base, c2.base);
+
+    c1.SwitchBase(10);
+    c2.SwitchBase(10);
+
+    int dif = ConvertToBase10(c1.value) - ConvertToBase10(c2.value);
+
+    int nrDigits = 0;
+    int auxDif = dif;
+
+    while (auxDif)
+    {
+        auxDif /= 10;
+        nrDigits++;
+    }
+
+    // Allocate memory for the character array
+    char* str = new char[nrDigits + 1];
+
+    // Convert each digit to its ASCII character representation
+    for (int i = nrDigits - 1; i >= 0; i--) {
+        str[i] = dif % 10 + '0';
+        dif /= 10;
+    }
+
+    // Add a null terminator to the end of the character array
+    str[nrDigits] = '\0';
+
+    Number t3(str, 10);
+    t3.SwitchBase(newBase);
+
+    delete[] str; // deallocate the output array when done
+
+    return t3;
+}
+
+Number operator-(const Number& n1, int n2)
+{
+    // make copy of our numbers
+    Number c1 = n1;
+
+    int newBase = max(c1.base, 10);
+
+    c1.SwitchBase(10);
+
+    int dif = ConvertToBase10(c1.value) - n2;
+
+    int nrDigits = 0;
+    int auxDif = dif;
+
+    while (auxDif)
+    {
+        auxDif /= 10;
+        nrDigits++;
+    }
+
+    // Allocate memory for the character array
+    char* str = new char[nrDigits + 1];
+
+    // Convert each digit to its ASCII character representation
+    for (int i = nrDigits - 1; i >= 0; i--) {
+        str[i] = dif % 10 + '0';
+        dif /= 10;
+    }
+
+    // Add a null terminator to the end of the character array
+    str[nrDigits] = '\0';
+
+    Number t3(str, 10);
+    t3.SwitchBase(newBase);
+
+    delete[] str; // deallocate the output array when done
+
+    return t3;
+}
+
+Number operator-(int n1, const Number& n2)
+{
+    // make copy of our numberss
+    Number c2 = n2;
+
+    int newBase = max(10, c2.base);
+
+    c2.SwitchBase(10);
+
+    int dif = n1 - ConvertToBase10(c2.value);
+
+    int nrDigits = 0;
+    int auxDif = dif;
+
+    while (auxDif)
+    {
+        auxDif /= 10;
+        nrDigits++;
+    }
+
+    // Allocate memory for the character array
+    char* str = new char[nrDigits + 1];
+
+    // Convert each digit to its ASCII character representation
+    for (int i = nrDigits - 1; i >= 0; i--) {
+        str[i] = dif % 10 + '0';
+        dif /= 10;
+    }
+
+    // Add a null terminator to the end of the character array
+    str[nrDigits] = '\0';
+
+    Number t3(str, 10);
+    t3.SwitchBase(newBase);
+
+    delete[] str; // deallocate the output array when done
+
+    return t3;
 }
 
 
@@ -94,7 +369,7 @@ void Number::SwitchBase(int newBase)
     // Check if the new base is within the valid range
     if (newBase < 2 || newBase > 16) {
         std::cout << "Error: invalid base specified!" << std::endl;
-        return;
+        exit (0);
     }
 
     // Convert the current value to a decimal number
@@ -155,40 +430,10 @@ void Number::SwitchBase(int newBase)
 
 int Number::GetDigitsCount() const
 {
-	return 0;
+    return strlen(value);
 }
 
 int Number::GetBase() const
 {
-	return 0;
-}
-
-Number operator+(const Number& n1, const Number& n2)
-{
-    return Number();
-}
-
-Number operator+(const Number& n1, int n2)
-{
-    return Number();
-}
-
-Number operator+(int n1, const Number& n2)
-{
-    return Number();
-}
-
-Number operator-(const Number& n1, const Number& n2)
-{
-    return Number();
-}
-
-Number operator-(const Number& n1, int n2)
-{
-    return Number();
-}
-
-Number operator-(int n1, const Number& n2)
-{
-    return Number();
+    return base;
 }
