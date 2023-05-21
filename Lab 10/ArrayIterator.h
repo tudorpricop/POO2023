@@ -54,5 +54,5 @@ T* ArrayIterator<T>::GetElement()
 	{
 		return nullptr;
 	}
-	return *Ptr + Current;
+	return *(Ptr + Current);
 }
