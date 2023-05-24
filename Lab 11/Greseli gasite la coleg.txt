@@ -1,0 +1,7 @@
+Greseli gasite :
+
+1.  mergeSort(arr, mid, right); in loc de mergeSort(arr, mid+1, right);
+2.  int k = right; in loc de int k = left;
+3.  int n1 = mid - left; in loc de  int n1 = mid - left +1;
+4.  rightArr[j] = arr[mid + j];	in loc de  rightArr[j] = arr[mid + 1 + j];
+5.  leftArr[i] = arr[i] in loc de leftArr[i] = arr[left + i];
